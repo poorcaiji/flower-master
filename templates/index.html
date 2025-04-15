@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>花卉识别系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="m-0">花卉识别系统</h1>
+                        <p class="text-white-50 mb-0 mt-2">上传花卉图片，AI将自动识别花卉种类</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-9">
+                                <form id="uploadForm" class="mb-3">
+                                    <div class="input-group">
+                                        <label for="imageInput" class="visually-hidden">选择图片</label>
+                                        <input type="file" class="form-control" id="imageInput" accept="image/*" required placeholder="选择花卉图片" title="请选择一张花卉图片">
+                                        <button type="submit" class="btn btn-primary" id="recognizeBtn">
+                                            <i class="fas fa-search me-2"></i>开始识别
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-3 text-center text-md-end">
+                                <button type="button" class="btn btn-secondary" id="batchRecognizeBtn" data-bs-toggle="modal" data-bs-target="#batchModal">
+                                    <i class="fas fa-layer-group me-2"></i>批量识别
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="loadingSpinner" class="d-none text-center mb-3">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">加载中...</span>
+                            </div>
+                            <span class="ms-2">正在识别中...</span>
+                        </div>
+
+                        <div id="resultArea" class="hidden">
+                            <div class="row">
+                                <!-- 左侧预览图片 -->
+                                <div class="col-lg-6">
+                                    <div class="preview-container">
+                                        <img id="preview" class="preview-image" alt="上传的花卉图片预览">
+                                    </div>
+                                </div>
+                                
+                        
+                                <div class="col-lg-6 results-side">
+                                    <div class="results-content">
+                                        <div class="results-title">
+                                            <i class="fas fa-leaf me-2"></i>识别结果
+                                        </div>
+                                        <div class="results-wrapper" id="results">
+                                            <!-- 结果将在这里显示 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 在批量识别结果区域中添加平均准确率显示 -->
+                        <div id="batchResultArea" class="hidden mt-4">
+                            <div class="card">
+                                <div class="card-header bg-secondary text-white">
+                                    <i class="fas fa-layer-group me-2"></i>批量识别结果
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="me-auto">
+                                        <!-- 这里可以放置其他内容，如果需要的话 -->
+                                    </div>
+                                    <div id="averageAccuracy" class="fw-bold fs-5 me-3">  <!-- 添加 me-3 类以增加右侧空白 -->
+                                        <strong>平均准确率:</strong> <span id="averageAccuracyValue">0%</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>图片</th>
+                                                    <th>文件名</th>
+                                                    <th>识别结果</th>
+                                                    <th>ID</th>
+                                                    <th>置信度</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="batchResults">
+                                                <!-- 批量识别结果将在这里显示 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量识别弹窗 -->
+    <div class="modal fade" id="batchModal" tabindex="-1" aria-labelledby="batchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="batchModalLabel">批量识别花卉</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="batchUploadForm">
+                        <div class="mb-3">
+                            <label for="batchImagesInput" class="form-label">选择多张花卉图片</label>
+                            <input type="file" class="form-control" id="batchImagesInput" multiple accept="image/*" required>
+                            <div class="form-text">可以按住Ctrl键选择多个文件</div>
+                        </div>
+                    </form>
+                    <div id="batchLoadingSpinner" class="d-none text-center mt-3">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">批量处理中</span>
+                        </div>
+                        <span class="ms-2">正在批量识别中，请稍等...</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="startBatchBtn">开始识别</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入Bootstrap JS -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('imageInput');
+            const resultArea = document.getElementById('resultArea');
+            const resultsDiv = document.getElementById('results');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const recognizeBtn = document.getElementById('recognizeBtn');
+
+            if (fileInput.files.length === 0) {
+                alert('请选择一张图片');
+                return;
+            }
+
+            // 显示加载状态
+            loadingSpinner.classList.remove('d-none');
+            recognizeBtn.disabled = true;
+            
+            // 隐藏批量结果区域，确保单图识别结果清晰展示
+            document.getElementById('batchResultArea').classList.add('hidden');
+
+            formData.append('file', fileInput.files[0]);
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                // 隐藏加载�?
+                loadingSpinner.classList.add('d-none');
+                recognizeBtn.disabled = false;
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                resultsDiv.innerHTML = '';
+                data.results.forEach(result => {
+                    const percentage = (result.probability * 100).toFixed(2);
+                    resultsDiv.innerHTML += `
+                        <div class="result-item">
+                            <div class="flower-name">
+                                <div class="name-cn"><i class="fas fa-leaf me-2"></i>${result.name_cn}</div>
+                                <div class="name-en">${result.name}</div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="small text-muted">类别ID: ${result.class}</div>
+                                <span class="badge bg-primary">${percentage}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: ${percentage}%" 
+                                     aria-valuenow="${percentage}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                resultArea.classList.remove('hidden');
+            } catch (error) {
+                // 隐藏加载�?
+                loadingSpinner.classList.add('d-none');
+                recognizeBtn.disabled = false;
+                
+                alert('识别过程中发生错误');
+                console.error('Error:', error);
+            }
+        });
+
+        // 批量识别相关JS
+        // 初始化模态框
+        const batchModal = new bootstrap.Modal(document.getElementById('batchModal'));
+        
+        // 点击批量识别按钮
+        document.getElementById('batchRecognizeBtn').addEventListener('click', function() {
+            batchModal.show();
+        });
+       
+        document.getElementById('startBatchBtn').addEventListener('click', async function() {
+            const fileInput = document.getElementById('batchImagesInput');
+            const loadingSpinner = document.getElementById('batchLoadingSpinner');
+            const startBatchBtn = document.getElementById('startBatchBtn');
+            const batchResultArea = document.getElementById('batchResultArea');
+            const batchResultsTable = document.getElementById('batchResults');
+            
+            if (fileInput.files.length === 0) {
+                alert('请选择至少一张图片');
+                return;
+            }
+            
+            // 显示加载�?
+            loadingSpinner.classList.remove('d-none');
+            startBatchBtn.disabled = true;
+            
+            const formData = new FormData();
+            for (let i = 0; i < fileInput.files.length; i++) {
+                formData.append('files[]', fileInput.files[i]);
+            }
+            
+            try {
+                const response = await fetch('/batch-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                // 隐藏加载状态
+                loadingSpinner.classList.add('d-none');
+                startBatchBtn.disabled = false;
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                // 生成批量结果表格
+                batchResultsTable.innerHTML = '';
+                let totalAccuracy = 0;
+                let validResultsCount = 0;
+
+                data.results.forEach(item => {
+                    const result = item.result || {name_cn: '识别失败', name: '', probability: 0};
+                    const percentage = result ? (result.probability * 100).toFixed(2) : 0;
+                    
+                    // 计算有效结果的准确率
+                    if (result.probability) {
+                        totalAccuracy += result.probability;
+                        validResultsCount++;
+                    }
+                    
+                    // 获取本地文件的URL
+                    const fileIndex = Array.from(fileInput.files).findIndex(file => file.name === item.filename);
+                    const thumbnailUrl = fileIndex !== -1 ? URL.createObjectURL(fileInput.files[fileIndex]) : '';
+                    
+                    batchResultsTable.innerHTML += `
+                        <tr>
+                            <td class="text-center">
+                                <img src="${thumbnailUrl}" alt="${item.filename}" style="max-width: 80px; max-height: 80px; border-radius: 5px;">
+                            </td>
+                            <td>${item.filename}</td>
+                            <td>
+                                <div class="fw-bold">${result.name_cn}</div>
+                                <div class="text-muted small">${result.name}</div>
+                            </td>
+                            <td>
+                                <div class="text-center">${result.class || '未知'}</div>
+                            </td>
+                            <td>
+                                <div class="text-center fw-bold">${percentage}%</div>
+                                <div class="progress mt-1">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                        style="width: ${percentage}%" 
+                                        aria-valuenow="${percentage}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // 计算并显示平均准确率
+                const averageAccuracy = validResultsCount > 0 ? (totalAccuracy / validResultsCount * 100).toFixed(2) : 0;
+                document.getElementById('averageAccuracyValue').innerText = `${averageAccuracy}%`;
+                
+                // 隐藏单图结果区域，显示批量结果区域
+                document.getElementById('resultArea').classList.add('hidden');
+                batchResultArea.classList.remove('hidden');
+                
+                // 关闭模态框
+                batchModal.hide();
+                
+            } catch (error) {
+                // 隐藏加载状态
+                loadingSpinner.classList.add('d-none');
+                startBatchBtn.disabled = false;
+                
+                alert('批量识别过程中发生错误');
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
