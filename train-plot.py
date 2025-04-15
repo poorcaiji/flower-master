@@ -155,8 +155,8 @@ if __name__ == '__main__':
 
     # 准确率子图
     plt.subplot(1, 2, 1)
-    plt.plot(train_acc, marker='o', linestyle='-', linewidth=1.5, label='训练', alpha=0.8)
-    plt.plot(val_acc, marker='s', linestyle='-', linewidth=1.5, label='验证', alpha=0.8)
+    plt.plot(train_acc, marker='o', linestyle='-', linewidth=1.5, label='训练', alpha=0.8, markersize=4)  # 标记点大小调整
+    plt.plot(val_acc, marker='s', linestyle='-', linewidth=1.5, label='验证', alpha=0.8, markersize=4)  # 标记点大小调整
     plt.title('准确率曲线', fontproperties=font, fontsize=12)
     plt.xlabel('Epoch', fontproperties=font, fontsize=10)
     plt.ylabel('准确率', fontproperties=font, fontsize=10)
@@ -165,8 +165,8 @@ if __name__ == '__main__':
 
     # 损失子图
     plt.subplot(1, 2, 2)
-    plt.plot(train_loss, marker='o', linestyle='-', linewidth=1.5, label='训练', alpha=0.8)
-    plt.plot(val_loss, marker='s', linestyle='-', linewidth=1.5, label='验证', alpha=0.8)
+    plt.plot(train_loss, marker='o', linestyle='-', linewidth=1.5, label='训练', alpha=0.8, markersize=4)  # 标记点大小调整
+    plt.plot(val_loss, marker='s', linestyle='-', linewidth=1.5, label='验证', alpha=0.8, markersize=4)  # 标记点大小调整
     plt.title('损失曲线', fontproperties=font, fontsize=12)
     plt.xlabel('Epoch', fontproperties=font, fontsize=10)
     plt.ylabel('损失', fontproperties=font, fontsize=10)
