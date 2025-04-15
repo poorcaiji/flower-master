@@ -131,7 +131,7 @@ if __name__ == '__main__':
     )
 
     class_weight = get_classes_weight(classes, train_dir)
-    epoch_number = 2
+    epoch_number = 50
 
     # 模型训练
     history = model.fit(
@@ -149,8 +149,8 @@ if __name__ == '__main__':
     train_acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
 
-    # --------------------------- 简约风格绘图 ---------------------------
-    plt.style.use('seaborn-whitegrid')  # 简约白底网格风格
+    # 简约风格绘图
+    plt.style.use('ggplot')  # 使用matplotlib内置的样式
     plt.figure(figsize=(12, 5))  # 缩小图幅
 
     # 准确率子图

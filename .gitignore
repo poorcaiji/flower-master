@@ -3,3 +3,5 @@
 /batch_uploads/
 /data/102flowers.tgz
 /data/jpg/
+/venv/
+/.idea
