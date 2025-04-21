@@ -95,254 +95,269 @@
         </div>
     </div>
 
+
     <div class="layout layout-left-bottom">
     </div>
-    <div class="layout layout-center-top">
-        <div class="panel">
-            <!-- 新增散点图容器 -->
-            <div id="scatterChart" style="width: 1000px;height:530px;"></div>
-            <script>
-                // 初始化 ECharts 实例
-                var scatterChart = echarts.init(document.getElementById('scatterChart'));
-
-                // 读取 CSV 文件
-                function readCSV(file, callback) {
-                    var rawFile = new XMLHttpRequest();
-                    // 使用绝对路径
-                    rawFile.open("GET", file, true);
-                    rawFile.onreadystatechange = function () {
-                        if (rawFile.readyState === 4) {
-                            if (rawFile.status === 200) {
-                                var allText = rawFile.responseText;
-                                callback(allText);
-                            } 
-                        }
-                    }
-                    rawFile.send(null);
-                }
-
-                readCSV('/static/excel/last_102_flowers_accuracy.csv', function(csvData) {
-                    if (!csvData) {
-                        // 在页面上显示错误提示
-                        document.getElementById('scatterChart').innerHTML = "<div style='text-align: center; color: red;'>Failed to load CSV file.</div>";
-                        return;
-                    }
-                    // 将 CSV 数据转换为数组
-                    var lines = csvData.split('\n');
-                    var data = [];
-                    for (var i = 1; i < lines.length; i++) {
-                        var values = lines[i].split(',');
-                        if (values.length === 3) {  // 修改为3，因为CSV文件有3列
-                            data.push([values[1], parseFloat(values[2])]);  // 使用花卉英文名称作为x轴
-                        }
-                    }
-
-                    // 检查数据是否为空
-                    if (data.length === 0) {
-                        document.getElementById('scatterChart').innerHTML = "<div style='text-align: center; color: red;'>No valid data found in CSV file.</div>";
-                        return;
-                    }
-
-                    // 设置散点图的配置项
-                    var option = {
-                        title: {
-                            text: '测试集102种花的准确率散点图',
-                            left: 'center',
-                            textStyle: {
-                                color: 'white',
-                                fontFamily: 'TimeNewsRoman',
-                                fontSize: 24,
-                                fontWeight: 'bold'
-                            }
-                        },
-                        tooltip: {
-                            // 修正 formatter，{a} 是系列名称，{b} 是类目名，{c} 是数值
-                            trigger: 'item',
-                            formatter: '花卉名称: {b}<br/>准确率: {c}%'
-                        },
-                        xAxis: {
-                            type: 'category',
-                            data: data.map(item => item[0]),
-                            axisLabel: {
-                                textStyle: {
-                                    fontFamily: 'TimeNewsRoman',
-                                    fontSize: 12,
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    rotate: 45
-                                }
-                            }
-                        },
-                        yAxis: {
-                            type: 'value',
-                            name: '准确率',
-                            nameTextStyle: {
-                                fontFamily: 'TimeNewsRoman',
-                                fontSize: 16,
-                                color: 'white',
-                                fontWeight: 'bold'
-                            },
-                            axisLabel: {
-                                textStyle: {
-                                    fontFamily: 'TimeNewsRoman',
-                                    fontSize: 16,
-                                    color: 'white',
-                                    fontWeight: 'bold'
-                                }
-                            }
-                        },
-                        series: [
-                            {
-                                name: '花卉',
-                                type: 'scatter',
-                                data: data.map(item => [item[0], item[1] * 100]),
-                                symbolSize: function(val) {
-                                    return Math.sqrt(val[1]); // 根据数值动态调整点的大小
-                                },
-                                itemStyle: {
-                                    color: function(params) {
-                                        // 使用黄、绿、蓝三种颜色循环
-                                        var colors = ['#FFD700', '#32CD32', '#1E90FF'];
-                                        return colors[params.dataIndex % colors.length];
-                                    },
-                                    opacity: 0.8, // 设置透明度
-                                    shadowBlur: 10,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                },
-                                emphasis: {
-                                    itemStyle: {
-                                        shadowBlur: 20,
-                                        shadowColor: 'rgba(0, 0, 0, 0.8)'
-                                    }
-                                }
-                            }
-                        ]
-                    };
-
-                    // 使用配置项设置图表
-                    scatterChart.setOption(option);
-                });
-            </script>
+    <div class="layout layout-left-bottom">
+        <div class="panel panel-bg">
+    
         </div>
     </div>
-    <div class="layout layout-center-bottom">
-       
-    
-    </div>
-    <div class="layout layout-right-top">
-        <div class="panel">
-<!--            <div class="title"><label>标题5</label></div>-->
-                <!-- 使用一个 div 元素作为容器来放置漏斗图 -->
-                <div id="funnelChart" style="width: 630px; height: 550px;"></div>
+    <div class="content">
+        <div class="layout layout-center-top">
+            <div class="panel">
+                <!-- 新增散点图容器 -->
+                <div id="scatterChart" style="width: 950px;height:550px;"></div>
                 <script>
+                    // 初始化 ECharts 实例
+                    var scatterChart = echarts.init(document.getElementById('scatterChart'));
+
                     // 读取 CSV 文件
                     function readCSV(file, callback) {
                         var rawFile = new XMLHttpRequest();
+                        // 使用绝对路径
                         rawFile.open("GET", file, true);
                         rawFile.onreadystatechange = function () {
-                            if (rawFile.readyState === 4 && rawFile.status === 200) {
-                                var allText = rawFile.responseText;
-                                callback(allText);
+                            if (rawFile.readyState === 4) {
+                                if (rawFile.status === 200) {
+                                    var allText = rawFile.responseText;
+                                    callback(allText);
+                                } 
                             }
                         }
                         rawFile.send(null);
                     }
 
-                    readCSV('static\\excel\\image_count_result.csv', function(csvData) {
+                    readCSV('/static/excel/last_102_flowers_accuracy.csv', function(csvData) {
+                        if (!csvData) {
+                            // 在页面上显示错误提示
+                            document.getElementById('scatterChart').innerHTML = "<div style='text-align: center; color: red;'>Failed to load CSV file.</div>";
+                            return;
+                        }
                         // 将 CSV 数据转换为数组
                         var lines = csvData.split('\n');
                         var data = [];
                         for (var i = 1; i < lines.length; i++) {
                             var values = lines[i].split(',');
-                            if (values.length === 3) {
-                                data.push({
-                                    name: values[1].trim(),
-                                    value: parseInt(values[2])
-                                });
+                            if (values.length === 3) {  // 修改为3，因为CSV文件有3列
+                                data.push([values[1], parseFloat(values[2])]);  // 使用花卉英文名称作为x轴
                             }
                         }
 
-                        // 找到数据中的最小值和最大值
-                        var minValue = Math.min(...data.map(item => item.value));
-                        var maxValue = Math.max(...data.map(item => item.value));
-                        // 计算差值
-                        var diff = maxValue - minValue;
-                        // 调整 min 和 max 的范围以放大差异
-                        var adjustedMin = minValue - diff * 0.1;
-                        var adjustedMax = maxValue + diff * 0.1;
+                        // 检查数据是否为空
+                        if (data.length === 0) {
+                            document.getElementById('scatterChart').innerHTML = "<div style='text-align: center; color: red;'>No valid data found in CSV file.</div>";
+                            return;
+                        }
 
-                        // 初始化 ECharts 实例
-                        var funnelChart = echarts.init(document.getElementById('funnelChart'));
-
-                        // 配置漏斗图数据
-                        var funnelOption = {
+                        // 设置散点图的配置项
+                        var option = {
                             title: {
-                                text: 'TOP10 花卉样本数量',
+                                text: '测试集102种花的准确率散点图',
                                 left: 'center',
+                                top: '2%',
                                 textStyle: {
                                     color: 'white',
                                     fontFamily: 'TimeNewsRoman',
                                     fontSize: 24,
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            tooltip: {
+                                // 修正 formatter，{a} 是系列名称，{b} 是类目名，{c} 是数值
+                                trigger: 'item',
+                                formatter: '花卉名称: {b}<br/>准确率: {c}%'
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: data.map((item, index) => index + 1), // 使用序号代替名称
+                                show: true, // 显示横坐标
+                                axisLabel: {
+                                    textStyle: {
+                                        fontFamily: 'TimeNewsRoman',
+                                        fontSize: 12,
+                                        color: 'white',
+                                        fontWeight: 'bold'
+                                    }
                                 }
                             },
                             tooltip: {
                                 trigger: 'item',
-                                formatter: '{a} <br/>{b} : {c} ({d}%)'
+                                formatter: function(params) {
+                                    // 在提示框中显示花卉名称和准确率
+                                    return '序号: ' + params.value[0] + '<br/>花卉名称: ' + data[params.value[0] - 1][0] + '<br/>准确率: ' + params.value[1] + '%';
+                                }
                             },
-                            legend: {
-                                data: data.map(item => item.name),
-                                textStyle: {
-                                    color: 'white',
+                            yAxis: {
+                                type: 'value',
+                                name: '准确率',
+                                nameTextStyle: {
                                     fontFamily: 'TimeNewsRoman',
-                                    fontSize: 12,
+                                    fontSize: 16,
+                                    color: 'white',
                                     fontWeight: 'bold'
+                                },
+                                axisLabel: {
+                                    textStyle: {
+                                        fontFamily: 'TimeNewsRoman',
+                                        fontSize: 16,
+                                        color: 'white',
+                                        fontWeight: 'bold'
+                                    }
                                 }
                             },
                             series: [
                                 {
-                                    name: '样本数量',
-                                    type: 'funnel',
-                                    left: '10%',
-                                    right: '10%',
-                                    top: 60,
-                                    bottom: 60,
-                                    min: adjustedMin,
-                                    max: adjustedMax,
-                                    minSize: '0%',
-                                    maxSize: '100%',
-                                    sort: 'descending',
-                                    gap: 2,
-                                    label: {
-                                        show: true,
-                                        position: 'inside'
-                                    },
-                                    labelLine: {
-                                        length: 10,
-                                        lineStyle: {
-                                            width: 1,
-                                            type: 'solid'
-                                        }
-                                    },
+                                    name: '花卉',
+                                    type: 'scatter',
+                                    data: data.map((item, index) => [index + 1, item[1] * 100]), // 修改数据格式
+                                    symbolSize: 10, // 固定点的大小
                                     itemStyle: {
-                                        borderColor: '#fff',
-                                        borderWidth: 1
+                                        color: function(params) {
+                                            // 使用黄、绿、蓝三种颜色循环
+                                            var colors = ['#FFD700', '#32CD32', '#1E90FF'];
+                                            return colors[params.dataIndex % colors.length];
+                                        },
+                                        opacity: 0.8, // 设置透明度
+                                        shadowBlur: 10,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
                                     },
                                     emphasis: {
-                                        label: {
-                                            fontSize: 20
+                                        itemStyle: {
+                                            shadowBlur: 20,
+                                            shadowColor: 'rgba(0, 0, 0, 0.8)'
                                         }
-                                    },
-                                    data: data
+                                    }
                                 }
                             ]
                         };
 
                         // 使用配置项设置图表
-                        funnelChart.setOption(funnelOption);
+                        scatterChart.setOption(option);
                     });
                 </script>
             </div>
         </div>
+    </div>
+
+    <div class="content">
+        <div class="layout layout-right-top">
+            <div class="panel">
+                    <!-- 使用一个 div 元素作为容器来放置漏斗图 -->
+                    <div id="funnelChart" style="width: 630px; height: 550px;"></div>
+                    <script>
+                        // 读取 CSV 文件
+                        function readCSV(file, callback) {
+                            var rawFile = new XMLHttpRequest();
+                            rawFile.open("GET", file, true);
+                            rawFile.onreadystatechange = function () {
+                                if (rawFile.readyState === 4 && rawFile.status === 200) {
+                                    var allText = rawFile.responseText;
+                                    callback(allText);
+                                }
+                            }
+                            rawFile.send(null);
+                        }
+
+                        readCSV('static\\excel\\image_count_result.csv', function(csvData) {
+                            // 将 CSV 数据转换为数组
+                            var lines = csvData.split('\n');
+                            var data = [];
+                            for (var i = 1; i < lines.length; i++) {
+                                var values = lines[i].split(',');
+                                if (values.length === 3) {
+                                    data.push({
+                                        name: values[1].trim(),
+                                        value: parseInt(values[2])
+                                    });
+                                }
+                            }
+
+                            // 找到数据中的最小值和最大值
+                            var minValue = Math.min(...data.map(item => item.value));
+                            var maxValue = Math.max(...data.map(item => item.value));
+                            // 计算差值
+                            var diff = maxValue - minValue;
+                            // 调整 min 和 max 的范围以放大差异
+                            var adjustedMin = minValue - diff * 0.1;
+                            var adjustedMax = maxValue + diff * 0.1;
+
+                            // 初始化 ECharts 实例
+                            var funnelChart = echarts.init(document.getElementById('funnelChart'));
+
+                            // 配置漏斗图数据
+                            var funnelOption = {
+                                title: {
+                                    text: 'TOP10 花卉样本数量',
+                                    left: 'center',
+                                    top: '5%', // 调整标题位置
+                                    textStyle: {
+                                        color: 'white',
+                                        fontFamily: 'TimeNewsRoman',
+                                        fontSize: 24,
+                                    }
+                                },
+                                tooltip: {
+                                    trigger: 'item',
+                                    formatter: '{a} <br/>{b} : {c} ({d}%)'
+                                },
+                                legend: {
+                                    data: data.map(item => item.name),
+                                    left: '5%', // 将图例位置设置为左侧，并留出10%的空白
+                                    top: '40%',
+                                    orient: 'vertical', // 将图例方向设置为垂直
+                                    textStyle: {
+                                        color: 'white',
+                                        fontFamily: 'TimeNewsRoman',
+                                        fontSize: 12,
+                                    }
+                                },
+                                series: [
+                                    {
+                                        name: '样本数量',
+                                        type: 'funnel',
+                                        left: '10%',
+                                        right: '10%',
+                                        top: 60,
+                                        bottom: 60,
+                                        min: adjustedMin,
+                                        max: adjustedMax,
+                                        minSize: '0%',
+                                        maxSize: '100%',
+                                        sort: 'descending',
+                                        gap: 2,
+                                        label: {
+                                            show: true,
+                                            position: 'inside'
+                                        },
+                                        labelLine: {
+                                            length: 10,
+                                            lineStyle: {
+                                                width: 1,
+                                                type: 'solid'
+                                            }
+                                        },
+                                        itemStyle: {
+                                            borderColor: '#fff',
+                                            borderWidth: 1
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                fontSize: 20
+                                            }
+                                        },
+                                        data: data
+                                    }
+                                ]
+                            };
+
+                            // 使用配置项设置图表
+                            funnelChart.setOption(funnelOption);
+                        });
+                    </script>
+            </div>
+         </div>
+    </div>
 
 </div>
 </body>

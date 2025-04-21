@@ -93,6 +93,7 @@ body{
 	right: 0;
 	width: 28%;
 	height: 50%;
+    margin-right: 1.5rem; /* 添加右边距以对齐 */
 }.layout-right-bottom{
 	top: 50%;
 	right: 0;
