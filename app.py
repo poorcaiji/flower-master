@@ -38,6 +38,10 @@ threading.Thread(target=preload_model).start()
 def home():
     return render_template('index.html')
 
+@app.route('/dp')
+def t1_page():
+    return render_template('dp.html')
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
@@ -129,4 +133,5 @@ def batch_upload():
         return jsonify({'error': f'批量处理错误: {str(e)}', 'details': error_details}), 500
 
 if __name__ == '__main__':
+    app.run(debug=True)
     app.run(debug=True)

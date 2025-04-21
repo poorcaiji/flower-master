@@ -38,7 +38,7 @@ FLOWER_NAMES_CN = {
 }
 
 # 定义数据路径
-TRAIN_DIR = r"D:\code\pythonProject1\pythonProject\pythonProject-3\data\new_jpg"
+TRAIN_DIR = r"D:\code\pythonProject1\pythonProject\flower-master\data\new_jpg"
 
 # 创建保存结果图片的目录
 RESULTS_DIR = "visualization_results"
