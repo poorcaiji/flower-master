@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/static/css/dp/style.css">
+    <script src="/static/js/echarts.js"></script>
+<title></title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<body class="fill-parent" dg-chart-auto-resize="true" dg-chart-options="{title:{show:false},legend:{top:0},grid:{top:25}}" dg-chart-theme="{color:'#F0F0F0',actualBackgroundColor:'#0c1c2e'}">
+<div class="head">
+    <div class="title"><label>花卉识别数据分析看板</label></div>
+</div>
+    <div class="content">
+        <div class="layout layout-left-top">
+            <div class="panel">
+                <!-- <div class="title"><label>数据集比例饼图</label></div> -->
+                <div id="pieChart" style="width: 630px; height: 550px;"></div>
+                <script>
+                    // 初始化 ECharts 实例
+                    var pieChart = echarts.init(document.getElementById('pieChart'));
+        
+                    // 配置饼图数据
+                    var option = {
+                        title: {
+                            text: '数据集比例',
+                            left: 'center',
+                            textStyle: {
+                                color: 'white',
+                                fontFamily: 'TimeNewsRoman',
+                                fontSize: 24,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{a} <br/>{b}: {c} ({d}%)'
+                        },
+                        legend: {
+                            // 将图例方向设置为水平
+                            orient: 'horizontal', 
+                            // 将图例位置设置为水平居中
+                            left: 'center', 
+                            data: ['训练集', '测试集', '验证集'],
+                            textStyle: {
+                                color: 'white',
+                                fontFamily: 'TimeNewsRoman',
+                                fontSize: 16,
+                                fontWeight: 'bold'
+                            },
+                            // 调整图例的垂直位置，可根据实际情况修改值
+                            top: '10%' 
+                        },
+                        series: [
+                        {
+                            name: '数据集',
+                            type: 'pie',
+                            radius: '55%',
+                            // 微调饼图的垂直位置
+                            center: ['50%', '50%'], 
+                            data: [
+                                {value: 80, name: '训练集'},
+                                {value: 10, name: '测试集'},
+                                {value: 10, name: '验证集'}
+                            ],
+                            label: {
+                                show: true,
+                                position: 'outer',
+                                formatter: '{b}\n{c}%', // 显示标签内容和百分比
+                                fontSize: 16, // 设置标签字体大小
+                                color: 'white', // 设置标签字体颜色
+                                fontWeight: 'bold' // 设置标签字体粗细
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                    };
+        
+                    // 使用配置项设置图表
+                    pieChart.setOption(option);
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="layout layout-left-bottom">
+        <div class="panel panel-bg">
+<!--            <div class="title"><label>标题2</label></div>-->
+   <div id="barChart" style="width: 900px;height: 500px;"></div>
+
+    <script>
+        // 初始化 ECharts 实例，柱状图
+        var myChart2 = echarts.init(document.getElementById('barChart'));
+
+        // 读取 iris_means.csv 文件
+        function readCSV(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, true);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4 && rawFile.status === 200) {
+                    var allText = rawFile.responseText;
+                    callback(allText);
+                }
+            }
+            rawFile.send(null);
+        }
+
+        readCSV('iris_means.csv', function(csvData) {
+            // 将 CSV 数据转换为数组
+            var lines = csvData.split("\n");
+            var irisData = [];
+            for (var i = 1; i < lines.length; i++) {
+                var values = lines[i].split(",");
+                if (values.length === 3) {
+                    irisData.push({
+                        feature: values[0].trim(),
+                        species: values[1].trim(),
+                        mean: parseFloat(values[2])
+                    });
+                }
+            }
+
+            // 整理数据
+            var dataMap = {};
+            irisData.forEach(function(item) {
+                if (!dataMap[item.feature]) {
+                    dataMap[item.feature] = {};
+                }
+                dataMap[item.feature][item.species] = item.mean;
+            });
+
+            // 设置条形图的配置项
+            var option = {
+                legend: {
+                    data: ['setosa', 'versicolor', 'virginica'], // 图例数据
+                      textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                },
+                xAxis: {
+                    type: 'value' ,// 横轴类型为数值轴
+                     axisLabel: {
+                        textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                     }
+                },
+                yAxis: {
+                    type: 'category', // 纵轴类型为类目轴
+                    data: Object.keys(dataMap), // 纵轴数据为特征名称,
+                     axisLabel: {
+                        textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                     }
+                },
+                series: [
+                    {
+                        name: 'setosa',
+                        type: 'bar',
+                        stack: 'total',
+                        data: Object.keys(dataMap).map(function(key) {
+                            return dataMap[key]['setosa'];
+                        })
+                    },
+                    {
+                        name: 'versicolor',
+                        type: 'bar',
+                        stack: 'total',
+                        data: Object.keys(dataMap).map(function(key) {
+                            return dataMap[key]['versicolor'];
+                        })
+                    },
+                    {
+                        name: 'virginica',
+                        type: 'bar',
+                        stack: 'total',
+                        data: Object.keys(dataMap).map(function(key) {
+                            return dataMap[key]['virginica'];
+                        })
+                    }
+                ]
+            };
+
+            // 使用配置项设置图表
+            myChart2.setOption(option);
+        });
+    </script>
+
+    </div>
+    </div>
+    <div class="layout layout-center-top">
+        <div class="panel">
+<!--            <div class="title"><label>标题3</label></div>-->
+            <div id="chart" style="width: 1000px;height:530px;"></div>
+            <script>
+                // 获取容器元素
+                var chartContainer = document.getElementById('chart');
+
+                // 初始化 ECharts 实例
+                var myChart = echarts.init(chartContainer);
+
+                // 准备鸢尾花数据集
+                var irisData = [
+                    // 以数组形式表示不同类别的花，每个类别包含四个特征值
+                    { species: 'setosa', sepalLength: 5.1, sepalWidth: 3.5, petalLength: 1.4, petalWidth: 0.2 },
+                    { species: 'versicolor', sepalLength: 7.0, sepalWidth: 3.2, petalLength: 4.7, petalWidth: 1.4 },
+                    { species: 'virginica', sepalLength: 6.3, sepalWidth: 3.3, petalLength: 6.0, petalWidth: 2.5 },
+                    // 添加更多数据...
+                ];
+
+                // 计算各个类别的特征平均值
+                var averages = {
+                    sepalLength: {},
+                    sepalWidth: {},
+                    petalLength: {},
+                    petalWidth: {}
+                };
+
+                irisData.forEach(function (flower) {
+                    Object.keys(averages).forEach(function (feature) {
+                        if (!averages[feature][flower.species]) {
+                            averages[feature][flower.species] = { sum: 0, count: 0 };
+                        }
+                        averages[feature][flower.species].sum += flower[feature];
+                        averages[feature][flower.species].count++;
+                    });
+                });
+
+                Object.keys(averages).forEach(function (feature) {
+                    averages[feature] = Object.keys(averages[feature]).reduce(function (acc, species) {
+                        acc[species] = averages[feature][species].sum / averages[feature][species].count;
+                        return acc;
+                    }, {});
+                });
+
+                // 设置柱状图的配置项和数据
+                var option = {
+                    tooltip: {},
+                    legend: {
+                        data: ['Sepal Length', 'Sepal Width', 'Petal Length', 'Petal Width'],
+                        textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                    },
+                    xAxis: {
+                        data: Object.keys(averages.sepalLength),
+                        axisLabel: {
+                        textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                     }
+                    },
+                    yAxis: {
+                      axisLabel: {
+                        textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                     }},
+                    series: [
+                        {
+                            name: 'Sepal Length',
+                            type: 'bar',
+                            data: Object.values(averages.sepalLength)
+                        },
+                        {
+                            name: 'Sepal Width',
+                            type: 'bar',
+                            data: Object.values(averages.sepalWidth)
+                        },
+                        {
+                            name: 'Petal Length',
+                            type: 'bar',
+                            data: Object.values(averages.petalLength)
+                        },
+                        {
+                            name: 'Petal Width',
+                            type: 'bar',
+                            data: Object.values(averages.petalWidth)
+                        }
+                    ]
+                };
+
+                // 使用刚指定的配置项和数据显示图表
+                myChart.setOption(option);
+            </script>
+        </div>
+    </div>
+    <div class="layout layout-center-bottom">
+        <div class="panel panel-bg">
+<!--            <div class="title"><label>标题4</label></div>-->
+              <div id="boxPlot" style="width: 750px;height: 500px;"></div>
+
+    <script>
+        // 初始化 ECharts 实例
+        var myChart4 = echarts.init(document.getElementById('boxPlot'));
+
+        // 读取 summary_selected.csv 文件
+        function readCSV(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, true);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4) {
+                    if (rawFile.status === 200) {
+                        var allText = rawFile.responseText;
+                        callback(null, allText);
+                    } else {
+                        callback("Failed to load file: " + file, null);
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+
+        readCSV('summary_selected.csv', function(error, csvData) {
+            if (error) {
+                console.error(error);
+                // 在页面上显示错误提示
+                document.getElementById('boxPlot').innerHTML = "<div style='text-align: center; color: red;'>Failed to load CSV file.</div>";
+            } else {
+                // 将 CSV 数据转换为数组
+                var lines = csvData.split("\n");
+                var categories = []; // 横坐标数据
+                var boxPlotData = []; // 箱线图数据
+                for (var i = 1; i < lines.length; i++) {
+                    var values = lines[i].split(",");
+                    console.log(values)
+                    if (values.length === 9) {
+                        categories.push(values[0].trim());
+                        boxPlotData.push([
+                            parseFloat(values[4]), // Min
+                            parseFloat(values[5]), // 25%
+                            parseFloat(values[6]), // 50%
+                            parseFloat(values[7]), // 75%
+                            parseFloat(values[8])  // Max
+                        ]);
+                    }
+                }
+                console.log(csvData)
+                console.log(categories)
+                console.log(boxPlotData)
+                // 设置箱线图的配置项
+                var option = {
+                    xAxis: {
+                        type: 'category',
+                        data: categories ,// 横坐标数据
+                        nameTextStyle: {
+                            color: '#FF0000' // 设置横坐标名称的字体颜色为红色
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                fontFamily: 'TimeNewsRoman', // 设置字体
+                                fontSize: 16,        // 设置字号
+                                color: 'white'  ,      // 设置颜色
+                                fontWeight: 'bold'  // 设置加粗
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Values', // 纵坐标名称
+                         nameTextStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                                fontSize: 16,        // 设置字号
+                                color: 'white'  ,      // 设置颜色
+                                fontWeight: 'bold'  // 设置加粗
+                        },
+                         axisLabel: {
+                            textStyle: {
+                                fontFamily: 'TimeNewsRoman', // 设置字体
+                                fontSize: 16,        // 设置字号
+                                color: 'white'  ,      // 设置颜色
+                                fontWeight: 'bold'  // 设置加粗
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'boxplot',
+                        data: boxPlotData ,// 箱线图数据
+                        color: "rgba(255, 255, 100, 1)",
+                        itemStyle: {
+                            color: "rgba(255, 255, 100, 1)" // 设置线之间的填充颜色
+                        }
+                    }]
+                };
+
+                // 使用配置项设置图表
+                myChart4.setOption(option);
+            }
+        });
+    </script>
+        </div>
+    </div>
+    <div class="layout layout-right-top">
+        <div class="panel">
+<!--            <div class="title"><label>标题5</label></div>-->
+                <!-- 使用一个 div 元素作为容器来放置雷达图 -->
+            <div id="radarChart" style="width: 630px; height: 550px;"></div>
+            <script>
+                // 初始化 ECharts 实例
+                var myChart = echarts.init(document.getElementById('radarChart'));
+
+                // 准备鸢尾花数据集
+                var irisData = [
+                    // 以数组形式表示不同类别的花，每个类别包含四个特征值
+                    { species: 'setosa', sepalLength: 5.1, sepalWidth: 3.5, petalLength: 1.4, petalWidth: 0.2 },
+                    { species: 'versicolor', sepalLength: 7.0, sepalWidth: 3.2, petalLength: 4.7, petalWidth: 1.4 },
+                    { species: 'virginica', sepalLength: 6.3, sepalWidth: 3.3, petalLength: 6.0, petalWidth: 2.5 },
+                    // 添加更多数据...
+                ];
+
+                // 获取鸢尾花类别
+                var categories = irisData.map(function (item) {
+                    return item.species;
+                });
+
+                // 获取特征名称
+                var features = Object.keys(irisData[0]).slice(1); // 去除类别属性
+
+                // 获取每个特征的数值
+                var data = irisData.map(function (item) {
+                    return features.map(function (feature) {
+                        return item[feature];
+                    });
+                });
+
+                // 设置雷达图的配置项和数据
+                var option = {
+                    tooltip: {},
+                    legend: {
+                        data: categories,
+
+                    },
+                    radar: {
+                        indicator: features.map(function (feature) {
+                            return { name: feature };
+                        }),
+                        name: {
+                            textStyle: {
+                                color: 'white',        // 设置字体颜色
+                                fontSize: 16,         // 设置字体大小
+                                fontFamily: 'TimeNewRoma'  // 设置字体样式
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'radar',
+                        data: data,
+                          axisLabel: {
+                        textStyle: {
+                            fontFamily: 'TimeNewsRoman', // 设置字体
+                            fontSize: 16,        // 设置字号
+                            color: 'white'  ,      // 设置颜色
+                            fontWeight: 'bold'  // 设置加粗
+                        }
+                     }
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表
+                myChart.setOption(option);
+            </script>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
