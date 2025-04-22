@@ -15,7 +15,7 @@
         <div class="layout layout-left-top">
             <div class="panel">
                 <!-- <div class="title"><label>数据集比例饼图</label></div> -->
-                <div id="pieChart" style="width: 630px; height: 550px;"></div>
+                <div id="pieChart" style="width: 630px; height: 600px; top: 20px"></div>
                 <script>
                     // 初始化 ECharts 实例
                     var pieChart = echarts.init(document.getElementById('pieChart'));
@@ -95,13 +95,217 @@
         </div>
     </div>
 
+    <script>
+        // 将 readCSV 函数移到全局作用域
+        function readCSV(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, true);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4) {
+                    if (rawFile.status === 200) {
+                        var allText = rawFile.responseText;
+                        callback(allText);
+                    } 
+                }
+            }
+            rawFile.send(null);
+        }
+    </script>
 
     <div class="layout layout-left-bottom">
-    </div>
-    <div class="layout layout-left-bottom">
-        <div class="panel panel-bg">
-    
+        <div class="panel" style="width: 48%; float: left; ">
+            <div id="trainChart" style="width: 100%; height: 520px; top: 20px"></div>
+            <script>
+                readCSV('/static/excel/training_log.csv', function(csvData) {
+                    var lines = csvData.split('\n');
+                    var data = [];
+                    for (var i = 1; i < lines.length; i++) {
+                        var values = lines[i].split(',');
+                        if (values.length === 5) {
+                            data.push({
+                                epoch: parseInt(values[0]),
+                                accuracy: parseFloat(values[2]),
+                                val_accuracy: parseFloat(values[4]),
+                            });
+                        }
+                    }
+
+                    var trainChart = echarts.init(document.getElementById('trainChart'));
+                    var option = {
+                        title: {
+                            text: '准确率曲线',
+                            left: '35%',
+                            textStyle: {
+                                color: 'white',
+                                fontFamily: 'TimeNewsRoman',
+                                fontSize: 24,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['训练准确率', '验证准确率'],
+                            textStyle: {
+                                color: 'white',
+                                fontFamily: 'TimeNewsRoman',
+                                fontSize: 12,
+                                fontWeight: 'bold'
+                            },
+                            top: '6%'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data.map(item => item.epoch),
+                            axisLabel: {
+                                textStyle: {
+                                    color: 'white',
+                                    fontFamily: 'TimeNewsRoman',
+                                    fontSize: 12,
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: 'rgba(255, 255, 255, 0.3)' // 淡化横坐标线
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            min: 0,
+                            max: 1,
+                            interval: 0.1, // 缩小纵坐标间隔
+                            axisLabel: {
+                                textStyle: {
+                                    color: 'white',
+                                    fontFamily: 'TimeNewsRoman',
+                                    fontSize: 12,
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            axisLine: {
+                                show: true, // 显示纵坐标线
+                                lineStyle: {
+                                    color: 'white'
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '训练准确率',
+                                type: 'line',
+                                data: data.map(item => item.accuracy),
+                                lineStyle: {
+                                    color: 'yellow' 
+                                }
+                            },
+                            {
+                                name: '验证准确率',
+                                type: 'line',
+                                data: data.map(item => item.val_accuracy),
+                                lineStyle: {
+                                    color: '#00ff00' 
+                                }
+                            }
+                        ]
+                    };
+                    trainChart.setOption(option);
+                });
+            </script>
         </div>
+        <div class="panel" style="width: 48%; float: right;">
+            <div id="valChart" style="width: 100%; height: 520px; top: 20px"></div>
+            <script>
+                readCSV('/static/excel/training_log.csv', function(csvData) {
+                    var lines = csvData.split('\n');
+                    var data = [];
+                    for (var i = 1; i < lines.length; i++) {
+                        var values = lines[i].split(',');
+                        if (values.length === 5) {
+                            data.push({
+                                epoch: parseInt(values[0]),
+                                loss: parseFloat(values[1]),
+                                val_loss: parseFloat(values[3])
+                            });
+                        }
+                    }
+
+                    var valChart = echarts.init(document.getElementById('valChart'));
+                    var option = {
+                        title: {
+                            text: '损失率曲线',
+                            left: '35%',
+                            textStyle: {
+                                color: 'white',
+                                fontFamily: 'TimeNewsRoman',
+                                fontSize: 24,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['训练损失率', '验证损失率'],  // 更新图例
+                            textStyle: {
+                                color: 'white',
+                                fontFamily: 'TimeNewsRoman',
+                                fontSize: 12,
+                                fontWeight: 'bold'
+                            },
+                            top: '6%'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data.map(item => item.epoch),
+                            axisLabel: {
+                                textStyle: {
+                                    color: 'white',
+                                    fontFamily: 'TimeNewsRoman',
+                                    fontSize: 12,
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            min: 0,
+                            max: 10,
+                            axisLabel: {
+                                textStyle: {
+                                    color: 'white',
+                                    fontFamily: 'TimeNewsRoman',
+                                    fontSize: 12,
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '训练损失率',
+                                type: 'line',
+                                data: data.map(item => item.loss),
+                                lineStyle: {
+                                    color: 'yellow'  // 橙色线条
+                                }
+                            },
+                            {
+                                name: '验证损失率',
+                                type: 'line',
+                                data: data.map(item => item.val_loss),
+                                lineStyle: {
+                                    color: '#00FF00'  // 绿色线条
+                                }
+                            }
+                        ]
+                    };
+                    valChart.setOption(option);
+                });
+            </script>
+        </div>
+    </div>
     </div>
     <div class="content">
         <div class="layout layout-center-top">
@@ -214,9 +418,15 @@
                                     symbolSize: 10, // 固定点的大小
                                     itemStyle: {
                                         color: function(params) {
-                                            // 使用黄、绿、蓝三种颜色循环
-                                            var colors = ['#FFD700', '#32CD32', '#1E90FF'];
-                                            return colors[params.dataIndex % colors.length];
+                                            // 根据准确率设置颜色
+                                            var accuracy = params.value[1];
+                                            if (accuracy >= 0 && accuracy < 30) {
+                                                return '#FF0000'; // 红色
+                                            } else if (accuracy >= 30 && accuracy < 60) {
+                                                return '#FFFF00'; // 黄色
+                                            } else if (accuracy >= 60 && accuracy <= 100) {
+                                                return '#00FF00'; // 绿色
+                                            }
                                         },
                                         opacity: 0.8, // 设置透明度
                                         shadowBlur: 10,
@@ -288,7 +498,7 @@
                             // 配置漏斗图数据
                             var funnelOption = {
                                 title: {
-                                    text: 'TOP10 花卉样本数量',
+                                    text: '随机10类花卉样本数量',
                                     left: 'center',
                                     top: '5%', // 调整标题位置
                                     textStyle: {
