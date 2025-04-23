@@ -381,9 +381,12 @@
                                 }
                             },
                             tooltip: {
-                                trigger: 'axis',
-                                triggerOn:"mousemove",
-                                formatter: "2323"
+                                trigger: 'item',
+                                formatter: function (params) {
+                                    var index = params.dataIndex;
+                                    return '序号: ' + (index + 1) + '<br/>花卉名称: ' + data[index][0] + '<br/>准确率: ' + data[index][1] + '%';
+                                },
+                                extraCssText: 'width: auto; height: auto; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 5px; border-radius: 5px;'
                             },
                             xAxis: {
                                 type: 'category',
