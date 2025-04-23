@@ -92,9 +92,11 @@ body {
 }
 
 .layout-center-bottom {
-    top: 50%;
+    top: 53%;
     left: 53.33%;
     right: 66.6%;
+    width: 45%;
+    height: 50%;
     bottom: 0.01em;
 }
 
@@ -171,8 +173,8 @@ body {
 }
 
 .layout-left-bottom .panel {
-    width: 52%;
+    width: 55%;
     height:500px;
     position: relative;
-    margin: 0 2%; /* 调整边距 */
+    margin: 0 1%; /* 调整边距 */
 }

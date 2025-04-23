@@ -234,7 +234,7 @@ def _load_model_and_classes():
         _classes = sorted([o for o in os.listdir(test_dir) if os.path.isdir(os.path.join(test_dir, o))], key=int)
         
         # 加载模型
-        _model = load_model("./saved_model/model-resnet50.h5")
+        _model = load_model("D:\\code\\pythonProject1\\pythonProject\\flower-master\\other_model\\model-resnet50.h5")
         
         # 预先计算类别索引字典
         _class_indices = dict(zip(_classes, range(len(_classes))))

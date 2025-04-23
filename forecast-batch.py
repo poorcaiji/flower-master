@@ -58,12 +58,12 @@ def predict_images_in_folders(model, test_dir, output_file="prediction_results.t
             print("-" * 80)
 
         # 计算排除80%后的平均准确率
-        valid_accuracies = [acc for acc in folder_accuracies.values() if acc > 0.8]
+        valid_accuracies = [acc for acc in folder_accuracies.values() if acc > 0.85]
         average_accuracy = sum(valid_accuracies) / len(valid_accuracies) if valid_accuracies else 0
 
-        f.write("\n整体预测统计信息（排除0%文件夹）\n")
+        f.write("\n整体预测统计信息\n")
         f.write("-" * 80 + "\n")
-        print("\n整体预测统计信息（排除0%文件夹）")
+        print("\n整体预测统计信息")
         print("-" * 80)
         for folder, accuracy in folder_accuracies.items():
             f.write(f"文件夹 {folder}: {accuracy * 100:.2f}%\n")
@@ -77,10 +77,11 @@ def predict_images_in_folders(model, test_dir, output_file="prediction_results.t
 
 
 if __name__ == '__main__':
-    test_dir = "./data/test"
+    # test_dir = "./data/test"
+    test_dir = "./data/new_jpg"
     image_size = (224, 224)
-    model_path = "./saved_model/model-resnet50.h5"
-    output_file = "prediction_results.txt"
+    model_path = "D:\\code\\pythonProject1\\pythonProject\\flower-master\\other_model\\model-resnet50.h5"
+    output_file = "prediction_results95.txt"
 
     model = load_model(model_path)
     average_accuracy = predict_images_in_folders(model, test_dir, output_file, image_size)

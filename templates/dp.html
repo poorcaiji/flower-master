@@ -267,6 +267,12 @@
                                     fontSize: 12,
                                     fontWeight: 'bold'
                                 }
+                            },
+                            axisLine: {
+                                show: true, // 显示纵坐标线
+                                lineStyle: {
+                                    color: 'white'
+                                }
                             }
                         },
                         yAxis: {
@@ -279,6 +285,12 @@
                                     fontFamily: 'TimeNewsRoman',
                                     fontSize: 12,
                                     fontWeight: 'bold'
+                                }
+                            },
+                            axisLine: {
+                                show: true, // 显示纵坐标线
+                                lineStyle: {
+                                    color: 'white'
                                 }
                             }
                         },
@@ -315,7 +327,7 @@
                 <script>
                     // 初始化 ECharts 实例
                     var scatterChart = echarts.init(document.getElementById('scatterChart'));
-
+    
                     // 读取 CSV 文件
                     function readCSV(file, callback) {
                         var rawFile = new XMLHttpRequest();
@@ -325,13 +337,14 @@
                             if (rawFile.readyState === 4) {
                                 if (rawFile.status === 200) {
                                     var allText = rawFile.responseText;
+                                    console.log(allText); // 打印读取到的 CSV 数据
                                     callback(allText);
                                 } 
                             }
                         }
                         rawFile.send(null);
                     }
-
+    
                     readCSV('/static/excel/last_102_flowers_accuracy.csv', function(csvData) {
                         if (!csvData) {
                             // 在页面上显示错误提示
@@ -347,13 +360,13 @@
                                 data.push([values[1], parseFloat(values[2])]);  // 使用花卉英文名称作为x轴
                             }
                         }
-
+    
                         // 检查数据是否为空
                         if (data.length === 0) {
                             document.getElementById('scatterChart').innerHTML = "<div style='text-align: center; color: red;'>No valid data found in CSV file.</div>";
                             return;
                         }
-
+    
                         // 设置散点图的配置项
                         var option = {
                             title: {
@@ -368,9 +381,9 @@
                                 }
                             },
                             tooltip: {
-                                // 修正 formatter，{a} 是系列名称，{b} 是类目名，{c} 是数值
-                                trigger: 'item',
-                                formatter: '花卉名称: {b}<br/>准确率: {c}%'
+                                trigger: 'axis',
+                                triggerOn:"mousemove",
+                                formatter: "2323"
                             },
                             xAxis: {
                                 type: 'category',
@@ -383,13 +396,11 @@
                                         color: 'white',
                                         fontWeight: 'bold'
                                     }
-                                }
-                            },
-                            tooltip: {
-                                trigger: 'item',
-                                formatter: function(params) {
-                                    // 在提示框中显示花卉名称和准确率
-                                    return '序号: ' + params.value[0] + '<br/>花卉名称: ' + data[params.value[0] - 1][0] + '<br/>准确率: ' + params.value[1] + '%';
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: 'white'
+                                    }
                                 }
                             },
                             yAxis: {
@@ -408,6 +419,11 @@
                                         color: 'white',
                                         fontWeight: 'bold'
                                     }
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: 'white'
+                                    }
                                 }
                             },
                             series: [
@@ -418,7 +434,7 @@
                                     symbolSize: 10, // 固定点的大小
                                     itemStyle: {
                                         color: function(params) {
-                                            // 根据准确率设置颜色
+                                            console.log(params.value); // 打印数据点的值
                                             var accuracy = params.value[1];
                                             if (accuracy >= 0 && accuracy < 30) {
                                                 return '#FF0000'; // 红色
@@ -433,18 +449,126 @@
                                         shadowColor: 'rgba(0, 0, 0, 0.5)'
                                     },
                                     emphasis: {
-                                        itemStyle: {
-                                            shadowBlur: 20,
-                                            shadowColor: 'rgba(0, 0, 0, 0.8)'
+                                        label: {
+                                            fontSize: 20
                                         }
-                                    }
+                                    },
                                 }
                             ]
                         };
-
+    
                         // 使用配置项设置图表
                         scatterChart.setOption(option);
                     });
+                </script>
+            </div>
+        </div>
+
+        <div class="layout layout-center-bottom">
+            <div class="panel">
+                <div id="confusionHeatmap" style="width: 980px;height:550px; margin: 0 auto"></div>
+                <script>
+                    // 初始化热力图
+                    var heatmapChart = echarts.init(document.getElementById('confusionHeatmap'));
+                    
+                    // 读取CSV数据
+                    fetch('/static/excel/top_10_confusion_matrix.csv')
+                        .then(response => response.text())
+                        .then(csvText => {
+                            const rows = csvText.split('\n');
+                            const categories = rows[0].split(',').slice(1);
+                            const data = [];
+                            
+                            // 解析数据
+                            for(let i=1; i<rows.length; i++) {
+                                const cols = rows[i].split(',');
+                                const rowName = cols[0];
+                                for(let j=1; j<cols.length; j++) {
+                                    if(parseInt(cols[j]) >= 0) {
+                                        data.push([j-1, i-1, cols[j]]);
+                                    }
+                                }
+                            }
+
+                            // 配置图表选项
+                            const option = {
+                                title: {
+                                    text: '花卉混淆热力图',
+                                    textStyle: {
+                                        color: 'white',
+                                        fontSize: 24,
+                                        fontFamily: 'TimeNewsRoman'
+                                    },
+                                    left: 'center'
+                                },
+                                tooltip: {
+                                    show: true,
+                                    trigger: 'item',
+                                    formatter: function(params) {
+                                        return `真实类别: ${categories[params.value[0]]}<br>
+                                                预测类别: ${categories[params.value[1]]}<br>
+                                                错误次数: ${params.value[2]}`;
+                                    }
+                                },
+                                xAxis: {
+                                    type: 'category',
+                                    data: categories,
+                                    axisLabel: {
+                                        rotate: 45,
+                                        textStyle: {
+                                            color: 'white',
+                                            fontSize: 12
+                                        }
+                                    }
+                                },
+                                yAxis: {
+                                    type: 'category',
+                                    data: categories,
+                                    axisLabel: {
+                                        textStyle: {
+                                            color: 'white',
+                                            fontSize: 12
+                                        }
+                                    }
+                                },
+                                visualMap: {
+                                    min: 0,
+                                    max: 5,
+                                    calculable: true,
+                                    orient: 'horizontal',
+                                    left: 'center',
+                                    top: 20,
+                                    textStyle: {
+                                        color: 'white'
+                                    },
+                                    inRange: {
+                                        color: ['#e0f3f8', '#43a2ca'] 
+                                    },
+                                    range: [0, 5]  // 设置滚动范围
+                                },
+                                series: [{
+                                    type: 'heatmap',
+                                    data: data,
+                                    label: {
+                                        show: true,
+                                        color: 'black',
+                                        fontSize: 14
+                                    },
+                                    itemStyle: {
+                                        borderWidth: 1,
+                                        borderColor: '#121122',
+                                        opacity: 0.8
+                                    },
+                                    emphasis: {
+                                        label: {
+                                            fontSize: 20
+                                        }
+                                    },
+                                }]
+                            };
+                            
+                            heatmapChart.setOption(option);
+                        });
                 </script>
             </div>
         </div>
