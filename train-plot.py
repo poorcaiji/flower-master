@@ -38,6 +38,10 @@ def override_keras_directory_iterator_next():
 
 
 # 函数说明：创建 ResNet50 模型（加载 ImageNet 预训练权重）
+# 在顶部导入新增的Keras层
+from tensorflow.keras.layers import GlobalAveragePooling2D, Multiply, Reshape, Conv2D, Lambda, Concatenate
+
+# 修改create_resnet50_model函数
 def create_resnet50_model(classes, image_size):
     base_model = ResNet50(
         include_top=False,
@@ -46,7 +50,44 @@ def create_resnet50_model(classes, image_size):
     )
     for layer in base_model.layers[:10]:
         layer.trainable = False
+    
+    # 新增CBAM注意力模块
+    def channel_attention(input_tensor):
+        channel_axis = 1 if K.image_data_format() == "channels_first" else -1
+        channels = K.int_shape(input_tensor)[channel_axis]
+        
+        # 通道注意力机制
+        avg_pool = GlobalAveragePooling2D()(input_tensor)
+        max_pool = Lambda(lambda x: K.max(x, axis=[1, 2]))(input_tensor)
+        
+        avg_pool = Reshape((1, 1, channels))(avg_pool) if channel_axis == -1 else avg_pool
+        max_pool = Reshape((1, 1, channels))(max_pool) if channel_axis == -1 else max_pool
+        
+        fc1 = Dense(channels//8, activation='relu', kernel_initializer='he_normal')
+        fc2 = Dense(channels, activation='sigmoid', kernel_initializer='he_normal')
+        
+        avg_out = fc2(fc1(avg_pool))
+        max_out = fc2(fc1(max_pool))
+        channel = Multiply()([avg_out, max_out])
+        return channel
+
+    def spatial_attention(input_tensor):
+        avg_out = Lambda(lambda x: K.mean(x, axis=3, keepdims=True))(input_tensor)
+        max_out = Lambda(lambda x: K.max(x, axis=3, keepdims=True))(input_tensor)
+        concat = Concatenate(axis=3)([avg_out, max_out])
+        
+        spatial = Conv2D(1, (7,7), padding='same', activation='sigmoid', 
+                       kernel_initializer='he_normal')(concat)
+        return spatial
+
+    def cbam_block(input_tensor):
+        channel = channel_attention(input_tensor)
+        x = Multiply()([input_tensor, channel])
+        spatial = spatial_attention(x)
+        return Multiply()([x, spatial])
+
     x = base_model.output
+    x = cbam_block(x)  # 添加CBAM模块
     x = Flatten()(x)
     x = Dropout(0.5)(x)
     output = Dense(len(classes), activation='softmax', name='predictions')(x)
@@ -74,7 +115,7 @@ def get_classes_weight(classes, dir):
 if __name__ == '__main__':
     train_dir = "./data/train"
     valid_dir = "./data/valid"
-    output_dir = "./other_model"
+    output_dir = "./saved_model"
 
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
