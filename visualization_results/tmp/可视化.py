@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 
-plt.rcParams['font.family'] = 'Times New Roman'  # 设置中文字体为黑体
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Times New Roman']  # 中文用黑体，英文用Times New Roman
 plt.rcParams['axes.unicode_minus'] = False  # 解决保存图像时负号'-'显示为方块的问题
 
 # 花卉中文名称映射表
@@ -292,6 +292,69 @@ def plot_random_samples(image_paths, class_names_dict):
     plt.close()
     print("随机采样图像已保存")
 
+def plot_class_weights(labels, class_names):
+    """生成双折线图分析（修复中文显示、数据标签和坐标倾斜）"""
+    print("正在生成双折线图分析...")
+    # 正确设置中文字体
+    plt.rcParams['font.sans-serif'] = ['SimHei', 'Times New Roman']  # 中文用黑体，英文用Times New Roman
+    plt.rcParams['axes.unicode_minus'] = False  # 确保负号正常显示
+
+    total_samples = len(labels)
+    unique_classes = list(set(labels))
+    selected_classes = random.sample(unique_classes, min(20, len(unique_classes)))
+
+    counter = Counter(labels)
+    counts = [counter[cls] for cls in selected_classes]
+    # 计算权重
+    raw_weights = [(total_samples / count) for count in counts]
+    # 归一化权重到 0 - 100% 的范围
+    max_weight = max(raw_weights)
+    weights = [(weight / max_weight) * 100 for weight in raw_weights]
+    names = [class_names[cls] for cls in selected_classes]  # 获取中文类别名称
+
+    plt.figure(figsize=(30, 12))
+
+    # 子图1：逆向权重分布
+    ax1 = plt.subplot(1, 2, 1)
+    ax1.plot(names, weights, marker='o', linestyle='-', linewidth=3, color='#d62728')
+    ax1.set_title("权重分布分析", fontsize=24, pad=20)
+    ax1.set_xlabel("类别名称", fontsize=20)
+    ax1.set_ylabel("权重", fontsize=20)
+
+    # 子图2：样本数量分布
+    ax2 = plt.subplot(1, 2, 2)
+    ax2.plot(names, counts, marker='s', linestyle='--', linewidth=3, color='#1f77b4')
+    ax2.set_title("类别样本数量分布", fontsize=24, pad=20)
+    ax2.set_xlabel("类别名称", fontsize=20)
+    ax2.set_ylabel("样本数量", fontsize=20)
+
+     # 统一设置横坐标倾斜和右对齐，并加粗坐标值
+    for ax in [ax1, ax2]:
+        for tick in ax.get_xticklabels():
+            tick.set_rotation(45)
+            tick.set_horizontalalignment("right")
+            tick.set_weight('bold')  # 设置字体加粗
+            tick.set_fontsize(16)  # 设置字体大小
+
+    # 给权重子图添加标签，以百分比形式显示权重
+    for x, y, count in zip(range(len(names)), weights, counts):
+        ax1.text(x, y + max(weights) * 0.03,  # 调整y偏移量避免超出边界
+                 f'权重: {y:.1f}%',  #权重以百分比形式显示
+                 ha='center', va='bottom', fontsize=10,
+                 bbox=dict(facecolor='white', edgecolor='gray', alpha=0.8))  # 白色背景框
+
+    # 给样本数量子图添加标签
+    for x, y in enumerate(counts):
+        ax2.text(x, y + max(counts) * 0.03,  # 调整y偏移量
+                 f'{y}',
+                 ha='center', va='bottom', fontsize=10,
+                 bbox=dict(facecolor='white', edgecolor='gray', alpha=0.8))
+
+    plt.tight_layout(pad=5)  # 增加子图间距
+    plt.savefig(os.path.join(RESULTS_DIR, "inverse_weight_analysis.png"), dpi=120)
+    plt.close()
+    print("逆向权重分析图已保存")
+
 if __name__ == "__main__":
     # 加载数据（直接返回中文类别名称）
     image_paths, labels, class_names = load_data()
@@ -301,9 +364,9 @@ if __name__ == "__main__":
     # plot_image_size_distribution(image_paths)
     # show_samples_per_class(image_paths, labels, class_names)
     # show_samples_per_class_224(image_paths, labels, class_names)
-    plot_random_samples(image_paths, FLOWER_NAMES_CN)
+    # plot_random_samples(image_paths, FLOWER_NAMES_CN)
     # plot_train_test_distribution(len(image_paths))
     # plot_training_curves()
     # plot_confusion_matrix(class_names, n_classes=min(20, len(class_names)))
-
+    plot_class_weights(labels, class_names)
     print("所有可视化图表已生成完毕，保存在 visualization_results 目录下。")

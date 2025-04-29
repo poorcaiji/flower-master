@@ -152,7 +152,7 @@ def plot_misclassified(samples, n_cols=5, n_rows=4):
         # 修改标题生成部分
         true_name = FLOWER_NAMES.get(str(sample['true']), f"Unknown_{sample['true']}")
         pred_name = FLOWER_NAMES.get(str(sample['pred']), f"Unknown_{sample['pred']}") 
-        plt.title(f"True: {true_name}\nPred: {pred_name}", fontsize=8)
+        plt.title(f"True: {true_name}\nPred: {pred_name}", fontsize=16)
         plt.axis('off')
     plt.tight_layout()
     plt.savefig('misclassified_examples_zhuYiLi.png')
