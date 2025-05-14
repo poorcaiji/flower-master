@@ -1,7 +1,7 @@
 import os
 from collections import Counter
 import csv
-
+from forecast import FLOWER_NAMES_CN
 # 导入花卉名称映射表
 FLOWER_NAMES = {
     '0': 'pink primrose',
@@ -161,6 +161,6 @@ with open('image_count_result.csv', 'w', newline='', encoding='utf-8') as csvfil
 
     # 写入数据
     for folder, count in top_ten_folders:
-        flower_name = FLOWER_NAMES.get(folder, '未知类别')
+        flower_name = FLOWER_NAMES_CN.get(folder, '未知类别')
         writer.writerow({'文件夹': folder, '花卉类别': flower_name, '图片数量': count})
         print(f"文件夹: {folder}，花卉类别: {flower_name}，图片数量: {count}")

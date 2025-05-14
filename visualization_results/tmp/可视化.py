@@ -14,108 +14,108 @@ plt.rcParams['axes.unicode_minus'] = False  # 解决保存图像时负号'-'显�
 
 # 花卉中文名称映射表
 FLOWER_NAMES_CN = {
-    '0': 'pink primrose',
-    '1': 'hard-leaved pocket orchid',
-    '2': 'canterbury bells',
-    '3': 'sweet pea',
-    '4': 'english marigold',
-    '5': 'tiger lily',
-    '6': 'moon orchid',
-    '7': 'bird of paradise',
-    '8': 'monkshood',
-    '9': 'globe thistle',
-    '10': 'snapdragon',
-    '11': "colt's foot",
-    '12': 'king protea',
-    '13': 'spear thistle',
-    '14': 'yellow iris',
-    '15': 'globe-flower',
-    '16': 'purple coneflower',
-    '17': 'peruvian lily',
-    '18': 'balloon flower',
-    '19': 'giant white arum lily',
-    '20': 'fire lily',
-    '21': 'pincushion flower',
-    '22': 'fritillary',
-    '23': 'red ginger',
-    '24': 'grape hyacinth',
-    '25': 'corn poppy',
-    '26': 'prince of wales feathers',
-    '27': 'stemless gentian',
-    '28': 'artichoke',
-    '29': 'sweet william',
-    '30': 'carnation',
-    '31': 'garden phlox',
-    '32': 'love in the mist',
-    '33': 'mexican aster',
-    '34': 'alpine sea holly',
-    '35': 'ruby-lipped cattleya',
-    '36': 'cape flower',
-    '37': 'great masterwort',
-    '38': 'siam tulip',
-    '39': 'lenten rose',
-    '40': 'barbeton daisy',
-    '41': 'daffodil',
-    '42': 'sword lily',
-    '43': 'poinsettia',
-    '44': 'bolero deep blue',
-    '45': 'wallflower',
-    '46': 'marigold',
-    '47': 'buttercup',
-    '48': 'oxeye daisy',
-    '49': 'common dandelion',
-    '50': 'petunia',
-    '51': 'wild pansy',
-    '52': 'primula',
-    '53': 'sunflower',
-    '54': 'pelargonium',
-    '55': 'bishop of llandaff',
-    '56': 'gaura',
-    '57': 'geranium',
-    '58': 'orange dahlia',
-    '59': 'pink-yellow dahlia',
-    '60': 'cautleya spicata',
-    '61': 'japanese anemone',
-    '62': 'black-eyed susan',
-    '63': 'silverbush',
-    '64': 'californian poppy',
-    '65': 'osteospermum',
-    '66': 'spring crocus',
-    '67': 'bearded iris',
-    '68': 'windflower',
-    '69': 'tree poppy',
-    '70': 'gazania',
-    '71': 'azalea',
-    '72': 'water lily',
-    '73': 'rose',
-    '74': 'thorn apple',
-    '75': 'morning glory',
-    '76': 'passion flower',
-    '77': 'lotus',
-    '78': 'toad lily',
-    '79': 'anthurium',
-    '80': 'frangipani',
-    '81': 'clematis',
-    '82': 'hibiscus',
-    '83': 'columbine',
-    '84': 'desert-rose',
-    '85': 'tree mallow',
-    '86': 'magnolia',
-    '87': 'cyclamen',
-    '88': 'watercress',
-    '89': 'canna lily',
-    '90': 'hippeastrum',
-    '91': 'bee balm',
-    '92': 'ball moss',
-    '93': 'foxglove',
-    '94': 'bougainvillea',
-    '95': 'camellia',
-    '96': 'mallow',
-    '97': 'mexican petunia',
-    '98': 'bromelia',
-    '99': 'blanket flower',
-    '100': 'trumpet creeper',
-    '101': 'blackberry lily'
+    '0': '粉红报春花',
+    '1': '硬叶袋兰花',
+    '2': '坎特伯雷钟花',
+    '3': '香豌豆',
+    '4': '英国万寿菊',
+    '5': '虎百合',
+    '6': '月亮兰花',
+    '7': '天堂鸟',
+    '8': '乌头花',
+    '9': '球状蓟',
+    '10': '金鱼草',
+    '11': '款冬花',
+    '12': '帝王普罗梯亚',
+    '13': '长刺蓟',
+    '14': '黄鸢尾',
+    '15': '球花',
+    '16': '紫锥花',
+    '17': '秘鲁百合',
+    '18': '桔梗',
+    '19': '巨型白色天南星',
+    '20': '火百合',
+    '21': '针垫花',
+    '22': '贝母花',
+    '23': '红姜花',
+    '24': '葡萄风信子',
+    '25': '虞美人',
+    '26': '威尔士王子羽毛',
+    '27': '无茎龙胆',
+    '28': '洋蓟',
+    '29': '甜威廉',
+    '30': '康乃馨',
+    '31': '花园福禄考',
+    '32': '雾中爱',
+    '33': '墨西哥翠菊',
+    '34': '高山海冬青',
+    '35': '红唇卡特兰',
+    '36': '好望角花',
+    '37': '大师草',
+    '38': '暹罗郁金香',
+    '39': '四旬花',
+    '40': '巴氏菊花',
+    '41': '水仙花',
+    '42': '剑兰',
+    '43': '一品红',
+    '44': '深蓝波列罗',
+    '45': '桂竹香',
+    '46': '万寿菊',
+    '47': '毛茛',
+    '48': '牛眼菊',
+    '49': '蒲公英',
+    '50': '矮牵牛',
+    '51': '野生三色堇',
+    '52': '报春花',
+    '53': '向日葵',
+    '54': '天竺葵',
+    '55': '兰达夫主教',
+    '56': '嘉宝花',
+    '57': '天竺葵',
+    '58': '橙色大丽花',
+    '59': '粉黄大丽花',
+    '60': '距花姜',
+    '61': '日本银莲花',
+    '62': '黑眼苏珊',
+    '63': '银叶',
+    '64': '加州罂粟',
+    '65': '南非菊',
+    '66': '春番红花',
+    '67': '有须鸢尾',
+    '68': '银莲花',
+    '69': '树罂粟',
+    '70': '勋章菊',
+    '71': '杜鹃花',
+    '72': '睡莲',
+    '73': '玫瑰',
+    '74': '曼陀罗',
+    '75': '牵牛花',
+    '76': '西番莲',
+    '77': '莲花',
+    '78': '蟾蜍百合',
+    '79': '火鹤花',
+    '80': '缅栀子花',
+    '81': '铁线莲',
+    '82': '木槿',
+    '83': '耧斗菜',
+    '84': '沙漠玫瑰',
+    '85': '树锦葵',
+    '86': '木兰',
+    '87': '仙客来',
+    '88': '豆瓣菜',
+    '89': '美人蕉',
+    '90': '朱顶红',
+    '91': '蜜蜂花',
+    '92': '球藓',
+    '93': '毛地黄',
+    '94': '三角梅',
+    '95': '山茶花',
+    '96': '锦葵',
+    '97': '墨西哥矮牵牛',
+    '98': '凤梨',
+    '99': '天人菊',
+    '100': '凌霄花',
+    '101': '黑莓百合'
 }
 
 # 定义数据路径
@@ -292,68 +292,108 @@ def plot_random_samples(image_paths, class_names_dict):
     plt.close()
     print("随机采样图像已保存")
 
-def plot_class_weights(labels, class_names):
-    """生成双折线图分析（修复中文显示、数据标签和坐标倾斜）"""
-    print("正在生成双折线图分析...")
-    # 正确设置中文字体
-    plt.rcParams['font.sans-serif'] = ['SimHei', 'Times New Roman']  # 中文用黑体，英文用Times New Roman
-    plt.rcParams['axes.unicode_minus'] = False  # 确保负号正常显示
 
+def plot_class_weights(labels, class_names):
+    """生成独立的权重分布和样本数量分布折线图"""
+    print("正在生成类别权重分析图...")
+
+    # 配置中文字体（全局设置）
+    plt.rcParams['font.sans-serif'] = ['SimHei', 'Times New Roman']
+    plt.rcParams['axes.unicode_minus'] = False
+
+    # 数据准备
     total_samples = len(labels)
     unique_classes = list(set(labels))
     selected_classes = random.sample(unique_classes, min(20, len(unique_classes)))
 
     counter = Counter(labels)
     counts = [counter[cls] for cls in selected_classes]
-    # 计算权重
-    raw_weights = [(total_samples / count) for count in counts]
-    # 归一化权重到 0 - 100% 的范围
+    raw_weights = [total_samples / count for count in counts]
     max_weight = max(raw_weights)
-    weights = [(weight / max_weight) * 100 for weight in raw_weights]
-    names = [class_names[cls] for cls in selected_classes]  # 获取中文类别名称
+    weights = [(w / max_weight) * 100 for w in raw_weights]
+    names = [class_names[cls] for cls in selected_classes]
+    # ----------------------------------
+    # 图1：权重分布图
+    # ----------------------------------
+    plt.figure(figsize=(25, 12))
+    ax1 = plt.gca()
+    # 绘制折线图
+    ax1.plot(
+        names, weights,
+        marker='o', linestyle='-',
+        linewidth=3, color='#d62728'
+    )
+    # 图表装饰
+    ax1.set_title("类别权重分布分析", fontsize=24, pad=20)
+    ax1.set_xlabel("类别名称", fontsize=24)
+    ax1.set_ylabel("归一化权重 (%)", fontsize=24)
+    # 横坐标标签设置
+    plt.xticks(
+        rotation=45,
+        ha="right",
+        fontsize=24,
+        weight='bold'  # 加粗字体
+    )
+    plt.yticks(
+        fontsize=24,
+        weight='bold'  # 加粗字体
+    )
+    # 添加数据标签
+    max_y = max(weights)
+    for x, y in enumerate(weights):
+        ax1.text(
+            x, y + max_y * 0.01,
+            f'{y:.1f}%',
+            ha='center', va='bottom',
+            fontsize=16,
+            bbox=dict(facecolor='white', edgecolor='gray', alpha=0.8)
+        )
 
-    plt.figure(figsize=(30, 12))
-
-    # 子图1：逆向权重分布
-    ax1 = plt.subplot(1, 2, 1)
-    ax1.plot(names, weights, marker='o', linestyle='-', linewidth=3, color='#d62728')
-    ax1.set_title("权重分布分析", fontsize=24, pad=20)
-    ax1.set_xlabel("类别名称", fontsize=20)
-    ax1.set_ylabel("权重", fontsize=20)
-
-    # 子图2：样本数量分布
-    ax2 = plt.subplot(1, 2, 2)
-    ax2.plot(names, counts, marker='s', linestyle='--', linewidth=3, color='#1f77b4')
-    ax2.set_title("类别样本数量分布", fontsize=24, pad=20)
-    ax2.set_xlabel("类别名称", fontsize=20)
-    ax2.set_ylabel("样本数量", fontsize=20)
-
-     # 统一设置横坐标倾斜和右对齐，并加粗坐标值
-    for ax in [ax1, ax2]:
-        for tick in ax.get_xticklabels():
-            tick.set_rotation(45)
-            tick.set_horizontalalignment("right")
-            tick.set_weight('bold')  # 设置字体加粗
-            tick.set_fontsize(16)  # 设置字体大小
-
-    # 给权重子图添加标签，以百分比形式显示权重
-    for x, y, count in zip(range(len(names)), weights, counts):
-        ax1.text(x, y + max(weights) * 0.03,  # 调整y偏移量避免超出边界
-                 f'权重: {y:.1f}%',  #权重以百分比形式显示
-                 ha='center', va='bottom', fontsize=10,
-                 bbox=dict(facecolor='white', edgecolor='gray', alpha=0.8))  # 白色背景框
-
-    # 给样本数量子图添加标签
-    for x, y in enumerate(counts):
-        ax2.text(x, y + max(counts) * 0.03,  # 调整y偏移量
-                 f'{y}',
-                 ha='center', va='bottom', fontsize=10,
-                 bbox=dict(facecolor='white', edgecolor='gray', alpha=0.8))
-
-    plt.tight_layout(pad=5)  # 增加子图间距
-    plt.savefig(os.path.join(RESULTS_DIR, "inverse_weight_analysis.png"), dpi=120)
+    plt.tight_layout()
+    plt.savefig(os.path.join(RESULTS_DIR, "weight_distribution.png"), dpi=120)
     plt.close()
-    print("逆向权重分析图已保存")
+    print("权重分布图已保存")
+
+    # ----------------------------------
+    # 图2：样本数量分布图
+    # ----------------------------------
+    plt.figure(figsize=(25, 12))
+    ax2 = plt.gca()
+    # 绘制折线图
+    ax2.plot(
+        names, counts,
+        marker='s', linestyle='--',
+        linewidth=3, color='#1f77b4'
+    )
+    # 图表装饰
+    ax2.set_title("类别样本数量分布", fontsize=24, pad=20)
+    ax2.set_xlabel("类别名称", fontsize=24)
+    ax2.set_ylabel("样本数量", fontsize=24)
+    # 横坐标标签设置
+    plt.xticks(
+        rotation=45,
+        ha="right",
+        fontsize=24,
+        weight='bold'  # 加粗字体
+    )
+    plt.yticks(
+        fontsize=24,
+        weight='bold'  # 加粗字体
+    )
+    # 添加数据标签
+    max_y = max(counts)
+    for x, y in enumerate(counts):
+        ax2.text(
+            x, y + max_y * 0.01,
+            f'{y}',
+            ha='center', va='bottom',
+            fontsize=16,
+            bbox=dict(facecolor='white', edgecolor='gray', alpha=0.8)
+        )
+    plt.tight_layout()
+    plt.savefig(os.path.join(RESULTS_DIR, "sample_count_distribution.png"), dpi=120)
+    plt.close()
+    print("样本数量分布图已保存")
 
 if __name__ == "__main__":
     # 加载数据（直接返回中文类别名称）

@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from tensorflow.keras import backend as K  # 新增导入
-from forecast import FLOWER_NAMES 
+from forecast import FLOWER_NAMES
+from forecast import FLOWER_NAMES_CN
 
 # 修改模型加载位置（原代码重复加载模型的问题）
 def predict_images_in_folders(model, test_dir, output_file="prediction_results.txt", image_size=(224, 224)):
@@ -67,14 +68,14 @@ def predict_images_in_folders(model, test_dir, output_file="prediction_results.t
                 with tf.GradientTape() as tape:
                     conv_output, predictions = grad_model(prepared_img)
                     loss = predictions[:, top1]
-
+                
                 grads = tape.gradient(loss, conv_output)
                 pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
                 conv_output = conv_output[0]
                 heatmap = conv_output @ pooled_grads[..., tf.newaxis]
                 heatmap = tf.squeeze(heatmap)
                 heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
-
+                
                 # 可视化处理
                 resized_img = image.img_to_array(img)  # 使用已经resize后的img对象
                 # 调整热图尺寸和通道处理
@@ -142,6 +143,8 @@ def predict_images_in_folders(model, test_dir, output_file="prediction_results.t
 
 # 在函数末尾添加错误可视化
 def plot_misclassified(samples, n_cols=5, n_rows=4):
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 设置中文字体
+    plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
     samples_sorted = sorted(samples, key=lambda x: x['confidence'])[:n_cols*n_rows]
     plt.figure(figsize=(16, 12))
     for i, sample in enumerate(samples_sorted):
@@ -150,12 +153,12 @@ def plot_misclassified(samples, n_cols=5, n_rows=4):
         plt.subplot(n_rows, n_cols, i+1)
         plt.imshow(img)
         # 修改标题生成部分
-        true_name = FLOWER_NAMES.get(str(sample['true']), f"Unknown_{sample['true']}")
-        pred_name = FLOWER_NAMES.get(str(sample['pred']), f"Unknown_{sample['pred']}") 
-        plt.title(f"True: {true_name}\nPred: {pred_name}", fontsize=16)
+        true_name = FLOWER_NAMES_CN.get(str(sample['true']), f"Unknown_{sample['true']}")
+        pred_name = FLOWER_NAMES_CN.get(str(sample['pred']), f"Unknown_{sample['pred']}")
+        plt.title(f"正确: {true_name}\n预测: {pred_name}", fontsize=16)
         plt.axis('off')
     plt.tight_layout()
-    plt.savefig('misclassified_examples_zhuYiLi.png')
+    plt.savefig('misclassified_examples_zhuYiLi_F1.png')
     plt.close()
 
 # 在主函数中添加显存限制
@@ -170,8 +173,9 @@ if __name__ == '__main__':
     test_dir = "./data/test"
     # test_dir = "./data/new_jpg"
     image_size = (224, 224)
-    model_path = "D:\\code\\pythonProject1\\pythonProject\\flower-master\\saved_model\\model-resnet50.h5"
-    output_file = "prediction_resultsZhuYiLi.txt"
+    # model_path = "D:\\code\\pythonProject1\\pythonProject\\flower-master\\saved_model\\model-resnet50.h5"
+    model_path = "D:\\code\\pythonProject1\\pythonProject\\flower-master\\F1_model\\model-resnet50.h5"
+    output_file = "prediction_resultsZhuYiLi_F1.txt"
 
     model = load_model(model_path)
     average_accuracy, all_features, all_labels, misclassified = predict_images_in_folders(model, test_dir, output_file, image_size)
@@ -186,7 +190,7 @@ if __name__ == '__main__':
     plt.scatter(features_2d[:, 0], features_2d[:, 1], c=all_labels, cmap='tab20', alpha=0.6)
     plt.colorbar()
     plt.title('t-SNE Feature Distribution')
-    plt.savefig('tsne_visualization_ZhuyiLi.png')
+    plt.savefig('tsne_visualization_ZhuyiLi_F1.png')
     plt.close()
 
     # PCA可视化（可选）
